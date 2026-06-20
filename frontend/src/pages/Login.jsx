@@ -1,26 +1,38 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
 import api from "../api/axios";
 import AuthContext from "../context/AuthContext";
 
 function Login() {
-
   const navigate = useNavigate();
 
-  const { login } = useContext(AuthContext);
+  const { login } =
+    useContext(AuthContext);
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-  const handleChange = (e) => {
-
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+  const [formData, setFormData] =
+    useState({
+      email: "",
+      password: "",
     });
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]:
+        e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -34,26 +46,75 @@ function Login() {
         formData
       );
 
-      const token = response.data;
+      const responseData =
+        response.data;
 
       localStorage.setItem(
         "token",
-        token
+        responseData.token
+      );
+
+      localStorage.setItem(
+        "role",
+        responseData.role
+      );
+
+      localStorage.setItem(
+        "userId",
+        responseData.id
+      );
+
+      localStorage.setItem(
+        "email",
+        responseData.email
       );
 
       login({
-        email: formData.email,
+
+        id:
+          responseData.id,
+
+        email:
+          responseData.email,
+
+        token:
+          responseData.token,
+
+        role:
+          responseData.role,
+
       });
 
-      alert("Login Successful");
+      alert(
+        "Login Successful"
+      );
 
-      navigate("/");
+      if (
+        responseData.role ===
+        "ADMIN"
+      ) {
 
-    } catch (error) {
+        navigate(
+          "/admin/dashboard"
+        );
+
+      }
+
+      else {
+
+        navigate("/");
+
+      }
+
+    }
+
+    catch (error) {
 
       console.log(error);
 
-      alert("Login Failed");
+      alert(
+        "Invalid Credentials"
+      );
 
     }
 
@@ -62,72 +123,284 @@ function Login() {
   return (
     <div
       className="
-      max-w-md
-      mx-auto
-      mt-20
-      rounded-3xl
-      border border-white/20
-      bg-white/15
-      backdrop-blur-xl
-      shadow-lg
-      p-8
+      min-h-[85vh]
+      flex
+      justify-center
+      items-center
+      px-5
     "
     >
-
-      <h1 className="text-4xl font-bold mb-8">
-        Login
-      </h1>
-
-      <form
-        onSubmit={handleSubmit}
+      <div
+        className="
+        w-full
+        max-w-6xl
+        grid
+        lg:grid-cols-2
+        overflow-hidden
+        rounded-[55px]
+        border border-white/20
+        bg-white/20
+        backdrop-blur-3xl
+        shadow-2xl
+      "
       >
+        {/* LEFT */}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
+        <div
           className="
-          w-full
-          p-4
-          rounded-2xl
-          mb-5
-          bg-white
-        "
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="
-          w-full
-          p-4
-          rounded-2xl
-          mb-5
-          bg-white
-        "
-        />
-
-        <button
-          className="
-          w-full
-          bg-blue-500
+          hidden
+          lg:flex
+          flex-col
+          justify-center
+          p-16
+          bg-gradient-to-br
+          from-blue-500
+          via-cyan-400
+          to-indigo-500
           text-white
-          p-4
-          rounded-full
-          hover:scale-105
-          duration-300
         "
         >
-          Login
-        </button>
+          <h1
+            className="
+            text-6xl
+            font-bold
+            leading-tight
+          "
+          >
+            Welcome
+            Back
+          </h1>
 
-      </form>
+          <p
+            className="
+            mt-10
+            text-xl
+            leading-9
+          "
+          >
+            Continue your premium shopping experience with ShopFlow.
+          </p>
 
+          <div
+            className="
+            mt-16
+            flex
+            items-center
+            gap-4
+          "
+          >
+            <ShieldCheck size={32} />
+
+            <h2 className="text-2xl">
+              Secure JWT Authentication
+            </h2>
+          </div>
+        </div>
+
+        {/* RIGHT */}
+
+        <div className="p-10 lg:p-16">
+          <div className="text-center">
+            <h1
+              className="
+              text-5xl
+              font-bold
+            "
+            >
+              Sign In
+            </h1>
+
+            <p
+              className="
+              mt-5
+              text-gray-500
+            "
+            >
+              Access your ShopFlow account
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="
+            mt-14
+            space-y-8
+          "
+          >
+            {/* Email */}
+
+            <div>
+              <div
+                className="
+                flex
+                items-center
+                gap-3
+                mb-4
+              "
+              >
+                <Mail
+                  className="
+                  text-blue-500
+                "
+                />
+
+                <h2 className="font-semibold">
+                  Email Address
+                </h2>
+              </div>
+
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="kartikey@gmail.com"
+                className="
+                w-full
+                p-5
+                rounded-[25px]
+                bg-white/40
+                backdrop-blur-xl
+                outline-none
+                border border-white/30
+              "
+                required
+              />
+            </div>
+
+            {/* Password */}
+
+            <div>
+              <div
+                className="
+                flex
+                items-center
+                gap-3
+                mb-4
+              "
+              >
+                <Lock
+                  className="
+                  text-blue-500
+                "
+                />
+
+                <h2 className="font-semibold">
+                  Password
+                </h2>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="********"
+                  className="
+                  w-full
+                  p-5
+                  rounded-[25px]
+                  bg-white/40
+                  border border-white/30
+                  outline-none
+                "
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
+                  className="
+                  absolute
+                  right-6
+                  top-1/2
+                  -translate-y-1/2
+                "
+                >
+                  {
+                    showPassword
+                      ? <EyeOff />
+                      : <Eye />
+                  }
+                </button>
+              </div>
+            </div>
+
+            {/* Forgot */}
+
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="
+                text-blue-500
+                font-medium
+              "
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            {/* Login Button */}
+
+            <button
+              className="
+              w-full
+              bg-gradient-to-r
+              from-blue-500
+              to-cyan-400
+              text-white
+              rounded-full
+              py-5
+              text-xl
+              font-semibold
+              shadow-2xl
+              flex
+              justify-center
+              items-center
+              gap-3
+              hover:scale-[1.02]
+              duration-300
+            "
+            >
+              Login
+              <ArrowRight />
+            </button>
+          </form>
+
+          {/* Register */}
+
+          <div
+            className="
+            text-center
+            mt-10
+          "
+          >
+            <p className="text-gray-500">
+              Don't have an account?
+            </p>
+
+            <Link
+              to="/register"
+              className="
+              text-blue-500
+              font-bold
+              text-lg
+            "
+            >
+              Create Account
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

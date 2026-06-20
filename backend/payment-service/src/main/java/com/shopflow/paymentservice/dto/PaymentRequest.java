@@ -13,4 +13,8 @@ public class PaymentRequest {
 
     private Double amount;
 
+    private String paymentMethod;
+
+    private String status;
+
 }

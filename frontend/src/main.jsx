@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+import { Toaster } from "react-hot-toast";
 
 import AuthProvider from "./context/AuthContextProvider";
 import CartProvider from "./context/CartContextProvider";
@@ -11,6 +12,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <CartProvider>
+
+ <Toaster
+          position="top-right"
+          reverseOrder={false}
+        />
+
         <App />
       </CartProvider>
     </AuthProvider>

@@ -1,32 +1,82 @@
 import { useState } from "react";
 import CartContext from "./CartContext";
-import api from "../api/axios";
+import { addItemToCart } from "../services/cartService";
+
+import toast from "react-hot-toast";
 
 function CartProvider({ children }) {
 
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+
+    const savedCart = localStorage.getItem(
+      "cartItems"
+    );
+
+    return savedCart
+      ? JSON.parse(savedCart)
+      : [];
+
+  });
 
   const addToCart = async (product) => {
 
     try {
 
       const request = {
-        userId: 1,
-        productId: product.id,
-        quantity: 1,
-      };
 
-      await api.post("/api/cart", request);
+  userId: Number(
+    localStorage.getItem(
+      "userId"
+    )
+  ),
 
-      setCartItems((prev) => [...prev, product]);
+  productId: product.id,
 
-      alert("Product added to cart");
+  quantity: 1,
 
-    } catch (error) {
+};
 
-      console.log(error);
+      await addItemToCart(
+        request
+      );
 
-      alert("Failed to add product");
+      const updatedCart = [
+
+        ...cartItems,
+
+        product,
+
+      ];
+
+      setCartItems(
+        updatedCart
+      );
+
+      localStorage.setItem(
+
+        "cartItems",
+
+        JSON.stringify(
+          updatedCart
+        )
+
+      );
+
+     toast.success(
+  "Product added successfully"
+);
+
+    }
+
+    catch (error) {
+
+      console.log(
+        error
+      );
+
+     toast.error(
+  "Failed to add product"
+);
 
     }
 
@@ -34,22 +84,62 @@ function CartProvider({ children }) {
 
   const removeFromCart = (id) => {
 
+    const updatedCart = cartItems.filter(
+
+      (item) =>
+
+        item.id !== id
+
+    );
+
     setCartItems(
-      cartItems.filter((item) => item.id !== id)
+      updatedCart
+    );
+
+    localStorage.setItem(
+
+      "cartItems",
+
+      JSON.stringify(
+        updatedCart
+      )
+
+    );
+
+  };
+
+  const clearCart = () => {
+
+    setCartItems([]);
+
+    localStorage.removeItem(
+      "cartItems"
     );
 
   };
 
   return (
+
     <CartContext.Provider
+
       value={{
+
         cartItems,
+
         addToCart,
+
         removeFromCart,
+
+        clearCart,
+
       }}
+
     >
+
       {children}
+
     </CartContext.Provider>
+
   );
 
 }

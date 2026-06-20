@@ -1,6 +1,7 @@
 package com.shopflow.authservice.controller;
 
 import com.shopflow.authservice.dto.LoginRequest;
+import com.shopflow.authservice.dto.LoginResponse;
 import com.shopflow.authservice.dto.RegisterRequest;
 import com.shopflow.authservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(
+    public LoginResponse login(
             @RequestBody LoginRequest request
     ) {
 

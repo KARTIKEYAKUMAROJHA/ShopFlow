@@ -2,6 +2,7 @@ package com.shopflow.authservice.service;
 
 import com.shopflow.authservice.client.UserClient;
 import com.shopflow.authservice.dto.LoginRequest;
+import com.shopflow.authservice.dto.LoginResponse;
 import com.shopflow.authservice.dto.RegisterRequest;
 import com.shopflow.authservice.dto.UserRequest;
 import com.shopflow.authservice.entity.User;
@@ -50,7 +51,7 @@ public class AuthService {
 
     }
 
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         User user = userRepository
                 .findByEmail(request.getEmail())
@@ -58,7 +59,9 @@ public class AuthService {
 
         if (user == null) {
 
-            return "Invalid Email";
+            throw new RuntimeException(
+                    "Invalid Email"
+            );
 
         }
 
@@ -69,13 +72,22 @@ public class AuthService {
 
         if (!matches) {
 
-            return "Invalid Password";
+            throw new RuntimeException(
+                    "Invalid Password"
+            );
 
         }
 
-        return jwtService.generateToken(
+        String token = jwtService.generateToken(
                 user.getEmail()
         );
+
+        return LoginResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .token(token)
+                .build();
 
     }
 
