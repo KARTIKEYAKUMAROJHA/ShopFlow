@@ -36,7 +36,8 @@ import Profile from "../pages/Profile";
 
 import About from "../pages/About";
 import Contact from "../pages/Contact";
-import FAQ from "../pages/FAQ";
+// import FAQ from "../pages/FAQ";
+import FAQ from "../pages/Faq";
 import Support from "../pages/Support";
 import Blog from "../pages/Blog";
 import BlogDetails from "../pages/BlogDetails";
